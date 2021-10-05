@@ -1,0 +1,27 @@
+lottoeml.eml  :   File Format Error
+Success! created json file : lottoeml.eml_info.json
+---------------------------------------
+test1.eml  : No such File exists
+Success! created json file : test1.eml_info.json
+---------------------------------------
+test2.eml  : No such File exists
+Success! created json file : test2.eml_info.json
+---------------------------------------
+Success! File successfully extracted from ./emlBox\test4.eml
+Success! Extracted attachment : (국문)개인정보제공 및 활용동의서.pdf
+Success! created json file : test4.eml_info.json
+---------------------------------------
+Success! File successfully extracted from ./emlBox\testEMLwithFile1.eml
+Success! Extracted attachment : 붙임3. (TOPCIT) 응시자 접수등록 매뉴얼.pdf
+Success! created json file : testEMLwithFile1.eml_info.json
+---------------------------------------
+Success! File successfully extracted from ./emlBox\testEMLwithFile2.eml
+Success! Extracted attachment : Request for cooperation and participation in MEU2021_to Jean Monnet Centres KOR.pdf
+Success! File successfully extracted from ./emlBox\testEMLwithFile2.eml
+Success! Extracted attachment : Request for cooperation and participation in MEU2021_to Jean Monnet Centres ENG.pdf
+Success! created json file : testEMLwithFile2.eml_info.json
+---------------------------------------
+Success! File successfully extracted from ./emlBox\testEMLwithFile3.eml
+Success! Extracted attachment : YSC 연세중국어회화 전문과정 안내자료.pdf
+Success! created json file : testEMLwithFile3.eml_info.json
+---------------------------------------
