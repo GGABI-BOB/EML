@@ -64,7 +64,6 @@ def convert_date(date):
     
     for i,month in enumerate(Month_list):        
         if con_date[2] == month:
-            
             Con_month = str(i+1)   
             temp = f"{con_date[3]}-{Con_month}-{con_date[1]} {con_date[4]}"
             return temp        
@@ -168,6 +167,7 @@ def extract_info(target_eml):
         
     return Data 
 
+
 ################################################
 # @@@ Input @@@
 # Path (Path where u want to drop files)  |  target_eml (name of target eml file)
@@ -205,7 +205,6 @@ def extract_attachments(Path,target_eml):
         return 'File Error'
 
     return fnam_list
-
 
 ###############################################
 # @@@ Function @@@
