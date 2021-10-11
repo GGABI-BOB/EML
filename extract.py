@@ -3,13 +3,8 @@ from email import policy
 from email.message import EmailMessage
 from email.header import decode_header
 import ctypes
-import os
 import email
 import re
-import simplejson
-import time
-import datetime
-
 # Direct .eml file or directory path
 EML_PATH_DIR = './emlBox'
 RESULT_DIR = './parsedData' 
@@ -18,7 +13,6 @@ RESULT_DIR = './parsedData'
 def Mbox(title, text, style):
     return ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
-
 ###############################################
 # @@@ Input @@@
 # date (parsed Date data)
@@ -26,8 +20,42 @@ def Mbox(title, text, style):
 # Writes status report 
 ################################################ 
 def Result_report(result):
-    with open('Status_Report.txt','a',encoding='utf-8') as f:
+    with open('Status Report.txt','a',encoding='utf-8') as f:
         f.writelines(f"{result}\n")
+
+def KMP_table(pattern):
+    lp = len(pattern)
+    tb = [0 for _ in range(lp)]
+    
+    pidx = 0
+    for idx in range(1, lp):
+        while pidx > 0 and pattern[idx] != pattern[pidx]:
+            pidx = tb[pidx-1]
+        
+        if pattern[idx] == pattern[pidx] :
+            pidx += 1
+            tb[idx] = pidx
+    
+    return tb
+
+def KMP(word, pattern):
+    table = KMP_table(pattern)
+
+    # results = [] 
+    pidx = 0
+    
+    for idx in range(len(word)):
+        while pidx > 0 and word[idx] != pattern[pidx] :
+            pidx = table[pidx-1]
+        if word[idx] == pattern[pidx]:
+            if pidx == len(pattern)-1 :
+                # results.append(idx-len(pattern)+2)
+                # pidx = table[pidx]
+                return 1
+            else:
+                pidx += 1
+    
+    return 0
 
 
 ###############################################
@@ -82,6 +110,7 @@ def HtmltoText(data):
     data = re.sub(r'<.*?>', '', data)
     data = re.sub(r'&lt;', '<', data)
     data = re.sub(r'&gt;', '>', data)
+    data = re.sub(r'p{.*}', '', data)
     return data
 
 
@@ -128,8 +157,12 @@ def extract_info(target_eml):
         "Title": [SUBJECT],
         "Date": [DATE],
         "Receiver": [RECEIVER],
+        "Num_of_Receiver": [len(RECEIVER)],
         "Sender": [SENDER]
         }
+
+        if KMP(SUBJECT, '(광고)'):
+            Data['AdFlag'] = ['yes']
 
         if msg['X-Original-SENDERIP'] is not None:
             SENDER_IP = str(msg['X-Original-SENDERIP'])
@@ -207,68 +240,3 @@ def extract_attachments(Path,target_eml):
     return fnam_list
 
 
-###############################################
-# @@@ Function @@@
-# Total parser 
-################################################ 
-def parse_eml():
-    for root, dir, files in os.walk(EML_PATH_DIR):
-        for file in files:
-            emlName = file.split(".")[0]
-            parsed_path = RESULT_DIR + "\\ '" + emlName + "'"
-            try:
-                os.makedirs(parsed_path)
-            except Exception as err:
-                Mbox("ERROR REPORTED!", str(err), 0)               
-                exit(1)
-            list_info = {}
-            list_Second = {}
-            if '_info.json' not in file:
-                target = f"{root}\{file}"
-                fnm_json = f"{parsed_path}\\{emlName}_info.json" 
-                list_Second = extract_info(target)
-                list_info['emlName'] = [file]
-
-                try:
-                    fnm_name = extract_attachments(parsed_path,target)
-                    if fnm_name == 'No File':
-                        list_info['Attachment'] = [' ']
-                        Result_report(f"{file}  : No such File exists")
-                    elif fnm_name == 'File Error':
-                        list_info['Attachment'] = ['FILE_FORMAT_ERROR']   
-                        Result_report(f"{file}  :   File Format Error")
-                    else:
-                        fnm_name = [x for x in fnm_name if x]   # init fnm_name
-                        list_info['Attachment'] = fnm_name
-        
-                except Exception as err:
-                    Mbox("ERROR REPORTED!", str(err), 0)
-                    Result_report(f"Error reported in {root} : {err} ")                
-                    pass
-                list_info.update(list_Second)
-                
-                json = simplejson.dumps(list_info, ensure_ascii=False)
-                try:
-                    o = open(fnm_json, "w", encoding='utf-8')
-                except UnicodeEncodeError:
-                    o = open(fnm_json, "w", encoding='euc-kr')
-                o.write(json)
-                o.close()
-                Result_report(f"Success! created json file : {file}_info.json")
-                Result_report("---------------------------------------")           
-
-            else:
-                Result_report(f"Same File Exists! : {fnm_json}")
-
-
-def main():
-    start = time.time()
-    parse_eml()
-    sec = time.time() - start
-    times = str(datetime.timedelta(seconds=sec)).split(".")
-    times = times[0]
-
-    Mbox("Parsing Completed!", "Running time : "+times, 0)
-
-if __name__ == "__main__":
-    main()
