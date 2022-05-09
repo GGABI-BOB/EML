@@ -13,7 +13,7 @@
 - 샌드박스 기반 첨부파일 동적 분석
 
 
-## :people_hugging: 함께한 사람들
+## 🧑‍🤝‍🧑 함께한 사람들
 
 - [@Anti9uA](https://github.com/Anti9uA) | [@geujeog](https://github.com/geujeog) | [@Ho1guma](https://github.com/Ho1guma)
 
